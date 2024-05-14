@@ -1,0 +1,14 @@
+$primary: #6f31ff ;
+$secondary: #939aa9 ;
+$success: #28A745;
+$info: #17A2B8;
+$warning: #FFC107;
+$danger: #DC3545;
+$light: #F8F9FA;
+$dark: #343A40;
+
+$enable-shadows: true;
+$prefix: "mo-";
+
+@import "../node_modules/bootstrap/scss/bootstrap";
+

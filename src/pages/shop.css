@@ -1,0 +1,16 @@
+a {
+    text-decoration: none;
+}
+
+#shop-item {
+    width: 400px;
+    text-align: center;
+    padding: 30px;
+    border: 2px solid transparent;
+    border-radius: 20px;
+    transition: .2s ease-in-out;
+}
+
+#shop-item:hover {
+    border-color: rgb(202, 202, 202);
+}

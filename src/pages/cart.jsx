@@ -1,6 +1,11 @@
 import Nav from '/src/components/Nav'
-import Footer from '/src/components/Footer'
+import Footer from'/src/components/Footer'
 import BC from '/src/components/BC'
+
+import Image from 'react-bootstrap/Image'
+import InputGroup from 'react-bootstrap/InputGroup'
+import Button from 'react-bootstrap/Button'
+import Modal from 'react-bootstrap/Modal'
 
 import guitar1 from '/src/assets/guitar1.jpg'
 import guitar2 from '/src/assets/guitar2.jpg'
@@ -12,12 +17,11 @@ import guitar7 from '/src/assets/guitar7.jpg'
 import guitar8 from '/src/assets/guitar8.jpg'
 import guitar9 from '/src/assets/guitar9.jpg'
 
-import box from '/src/assets/box.svg'
+import { useState } from 'react'
 
-import Image from 'react-bootstrap/Image'
-import Button from 'react-bootstrap/Button'
+import './cart.scss'
 
-import { useParams, useNavigate } from 'react-router-dom'
+const guitars = [guitar1, guitar2, guitar3, guitar4, guitar5, guitar6, guitar7, guitar8, guitar9]
 
 const Stock = [
     {
@@ -144,13 +148,48 @@ const Stock = [
     }
 ]
 
+function CartItem({ index, cart, editCart, toggleVisible }) {
 
+    const gImage = guitars[index]
+    const gData = Stock[index]
 
-export default function GuitarPage({ cart, editCart }) {
+    const decCart = () => {
+        if (cart[index] === 1) {
+            toggleVisible()
+            editCart(index, -1)()
+        } else {
+            editCart(index, -1)()
+        }
+    }
 
-    const navigate = useNavigate()
-    let { index } = useParams();
-    let g = [guitar1, guitar2, guitar3, guitar4, guitar5, guitar6, guitar7, guitar8, guitar9]
+    return (
+        <div className='d-flex gap-5 w-100 m-5'>
+            <Image className='me-5 mb-5 mt-5' src={gImage}/>
+            <div>
+                <div className='w-100'>
+                    <h2 className='mb-3'>{gData['name']}</h2>
+                    <h4 className='mb-4'>${gData['price']}</h4>
+                </div>
+                
+                <div className=''>
+                    <InputGroup className=''>
+                        <Button onClick={decCart} variant='outline-secondary'>-</Button>
+                        <div className='ps-3 pe-3 pb-2 pt-2 border'>{cart[index]}</div>
+                        <Button onClick={editCart(index, 1)} variant='outline-secondary'>+</Button>
+                    </InputGroup>
+                </div>
+            </div>
+        </div>
+    )
+}
+
+export default function CartPage({ cart, editCart }) {
+    
+    const [modalVisible, setModalVisible] = useState(false);
+
+    function toggleVisible() {
+        setModalVisible(!modalVisible)
+    }
 
     let items = [
         {
@@ -162,54 +201,88 @@ export default function GuitarPage({ cart, editCart }) {
             link: '/shop'
         },
         {
-            name: Stock[index]['name'].toUpperCase(),
-            link: `/shop/${index}`
+            name: 'CART',
+            link: '/shop/cart'
         }
     ]
 
-    function onAddItem() {
-        editCart(index, 1)()
-        navigate('/shop/cart')
-    }
+    let c = [0,0,0,0,0,0,0,0,0]
 
     return (
         <div>
+            
             <Nav />
-            <div className='container mb-5'>
-                <BC items={items}/>
-
-                <div className='d-flex gap-5 m-5 justify-content-center'>
-                    <Image width='200px' src={g[index]} className='me-5 mt-3 mb-5'/>
-                    <div className='w-50 ms-5 mt-3 '>
-                        <h1 className='mb-3'>{Stock[index]['name']}</h1>
-                        <h2 className='mb-4'>${Stock[index]['price']}</h2>
-                        
-                        <div className='d-flex gap-3 mb-4 align-items-center'>
-                            <Image width='30px' src={box} />
-                            <div>
-                                <p className='mb-0 mt-0'><strong>IN STOCK</strong></p>
-                                <p className='mb-0 mt-0'>Available To Ship</p>
+            <div className='container w-100'>
+                <BC className='mt-5' items={items} />
+                <div className='d-flex'>
+                    <div className='w-75'>
+                        <div className='mb-5 ms-3'>
+                            <h1 className='display-5 text-primary mb-3 mt-2'>Your Cart</h1>
+                            <div className='text-muted' style={{ fontSize: '1.3em' }}>{findSum(cart)} ITEMS</div>
+                        </div>
+                        {c.map((e, index) => {
+                            if (cart[index] > 0) {
+                                return <CartItem index={index} key={index} cart={cart} editCart={editCart} toggleVisible={toggleVisible} />
+                            }
+                            return null
+                        })}
+                    </div>
+                    <div className='w-25'>
+                        <h3 className='mb-4' >ORDER SUMMARY</h3>
+                        <div>
+                            <div className='d-flex justify-content-between mb-2'>
+                                <div>Subtotal:</div>
+                                <div>${getTotalPrice(cart).toLocaleString('en-US')}</div>
+                            </div>
+                            <div className='d-flex justify-content-between mb-2'>
+                                <div>Shipping:</div>
+                                <div>FREE</div>
+                            </div>
+                            <div className='d-flex justify-content-between mb-2'>
+                                <div>Tax:</div>
+                                <div>$0.00</div>
+                            </div>
+                            <hr />
+                            <div className='d-flex justify-content-between mb-4'>
+                                <div>Estimated Total:</div>
+                                <div>${getTotalPrice(cart).toLocaleString('en-US')}</div>
                             </div>
                         </div>
-
-                        <div className='d-grid gap-3'>
-                            <Button onClick={onAddItem} size='lg'>Add to Cart</Button>
-                            <Button href='/shop/cart' size='lg' variant='outline-primary'>View Cart</Button>
+                        <div className='d-flex gap-3 justify-content-center'>
+                            <Button className='mb-5 btn'>Checkout</Button>
+                            <Button href='/shop' className='mb-5 btn' variant='outline-primary'>Continue Shopping</Button>
                         </div>
+                        
                     </div>
                 </div>
-                <div className='mb-5 mt-5'>
-                    <h2 className='mt-5 mb-2'>Description</h2>
-                    <div className='lead mb-4'>{Stock[index]['description']}</div>
-                    <h2 className='mb-2' >Features</h2>
-                    <div className='lead mb-5'>{Stock[index]['features'].map((e) => {
-                        return <li>{e}</li>
-                    })}</div>
-
-                </div>
-
+                
+                
             </div>
             <Footer />
         </div>
     )
+}
+
+function findSum(arr) {
+    let result = 0;
+    for (let i = 0; i < 9; i++) {
+        result += arr[i]
+    }
+    return result
+}
+
+function getTotalPrice(cart) {
+    let result = 0
+    for (let i = 0; i < 9; i++) {
+        result += cart[i] * Stock[i]['price']
+    }
+    return result
+}
+
+function clearCart(cart) {
+    for (let i = 0; i < 9; i++) {
+        if (cart[i] > 0) {
+            editCart(i, -cart[0])
+        }
+    }
 }

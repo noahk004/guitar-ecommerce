@@ -20,17 +20,16 @@ export default function Nav() {
                 <div className="d-flex gap-3">
                     <Link className="nav-link p-3" style={navItemStyle} to="/">Home</Link>
                     <Link className="nav-link p-3" style={navItemStyle} to="/shop">Shop</Link>
-                    <Link className="nav-link p-3" style={navItemStyle} to="/learn">Learn</Link>
-                    <Link className="nav-link p-3" style={navItemStyle} to="/contact">Contact</Link>
+                    <Link className="nav-link p-3" style={navItemStyle} to="/about">About</Link>
                 </div>
             </div>
             
             <div className='d-flex'>
-                <Link className="nav-link p-3 me-2 d-flex gap-3" style={navItemStyle}  to="/cart">
+                <Link className="nav-link p-3 me-2 d-flex gap-3" style={navItemStyle}  to="/shop/cart">
                     <img src={cartIcon} width='25px' alt="Sign in" />
                     <div>Cart</div>
                 </Link>
-                <Link className="nav-link p-3 me-2 d-flex gap-3" style={navItemStyle}  to="/sign-in">
+                <Link className="nav-link p-3 me-2 d-flex gap-3" style={navItemStyle} >
                     <img src={userIcon} width='25px' alt="Sign in" />
                     <div>Sign In</div>
                 </Link>

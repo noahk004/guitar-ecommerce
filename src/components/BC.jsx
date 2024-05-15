@@ -9,7 +9,7 @@ export default function BC({ items }) {
                 if (index === itemsLen-1) {
                     active = true;
                 }
-                return <Breadcrumb.Item active={active} href={e['link']}>{e['name']}</Breadcrumb.Item>
+                return <Breadcrumb.Item key={index} active={active} href={e['link']}>{e['name']}</Breadcrumb.Item>
             })}
         </Breadcrumb>
     )

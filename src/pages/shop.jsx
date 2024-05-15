@@ -15,6 +15,8 @@ import guitar7 from '/src/assets/guitar7.jpg'
 import guitar8 from '/src/assets/guitar8.jpg'
 import guitar9 from '/src/assets/guitar9.jpg'
 
+import { useState } from 'react'
+
 import './shop.css'
 
 const Stock = [
@@ -142,7 +144,7 @@ const Stock = [
     }
 ]
 
-function StockItem({ index, guitar }) {
+function StockItem({ guitar, index }) {
     let link = `/shop/${index}`
     return (
         <div className='d-flex align-items-center'>
@@ -157,7 +159,22 @@ function StockItem({ index, guitar }) {
 
 
 export default function ShopPage() {
-    
+
+    let [searchTerm, setSearchTerm] = useState('')
+        
+    let [modelFilters, setModelFilters] = useState({
+        'strat': false,
+        'tele': false
+    })
+
+    let [priceFilters, setPriceFilters] = useState({
+        0: false,
+        1000: false,
+        2000: false
+    })
+
+    let [displayCount, setDisplayCount] = useState(10)
+
     let a = [0,1,2,3,4,5,6,7,8]
     
     let items = [
@@ -171,19 +188,44 @@ export default function ShopPage() {
         }
     ]
 
+    const handleChangeSearch = (e) => {
+        const { value } = e.target
+        setSearchTerm(value)
+    }
+
+    const handleChangeModelFunc = (type) => {
+        const handleChangeModel = (e) => {
+            const checked = e.target.checked
+            setModelFilters(prevState => ({
+                ...prevState,
+                [type]: checked
+            }))
+        }
+        return handleChangeModel
+    }
+
+    const handleChangePriceFunc = (type) => {
+        const handleChangePrice = (e) => {
+            const checked = e.target.checked
+            setPriceFilters(prevState => ({
+                ...prevState,
+                [type]: checked
+            }))
+        }
+        return handleChangePrice
+    }
+
     return (
         <div>
             <Nav />
-            <div className='container'>
+            <div className='container mb-5'>
                 <BC items={items}/>
                 <div className='d-flex align-items-center justify-content-between mt-4'>
                     <div className=' ms-3'>
-                        <h1 className='display-6 text-primary'>Electric Guitars</h1>
-                        <div className='lead' style={{fontSize: '1.3em'}}>Showing 10 results</div>
+                        <h1 className='display-5 text-primary'>Electric Guitars</h1>
                     </div>
                     <div className=' input-group w-25 me-5'>
-                        <input type='text' className='form-control' placeholder='Search' aria-label='Search' aria-describedby='button-addon2' />
-                        <button className='btn btn-outline-secondary' type='button' id='button-addon2'>Submit</button>
+                        <input onChange={handleChangeSearch} type='text' className='form-control ms-5' placeholder='Search' />
                     </div>
 
                 </div>
@@ -194,30 +236,26 @@ export default function ShopPage() {
                         <p className='text-muted mt-3 mb-1'>MODEL</p>
                         <hr width='250px' className='mt-2 mb-2' />
                         <div className="form-check">
-                            <input className="form-check-input" type='checkbox' value='' id='flexCheckIntermediate1' />
+                            <input onChange={handleChangeModelFunc('strat')} className="form-check-input" type='checkbox' value='' id='flexCheckIntermediate1' />
                             <label className='form-check-label' htmlFor='flexCheckIntermediate1'>Stratocaster</label>
                         </div>
                         <div className="form-check">
-                            <input className="form-check-input" type='checkbox' value='' id='flexCheckIntermediate2' />
+                            <input onChange={handleChangeModelFunc('tele')} className="form-check-input" type='checkbox' value='' id='flexCheckIntermediate2' />
                             <label className='form-check-label' htmlFor='flexCheckIntermediate2'>Telecaster</label>
-                        </div>
-                        <div className="form-check">
-                            <input className="form-check-input" type='checkbox' value='' id='flexCheckIntermediate3' />
-                            <label className='form-check-label' htmlFor='flexCheckIntermediate3'>Other</label>
                         </div>
 
                         <p className='text-muted mt-3 mb-1'>PRICE</p>
                         <hr width='250px' className='mt-2 mb-2' />
                         <div className="form-check">
-                            <input className="form-check-input" type='checkbox' value='' id='flexCheckIntermediate4' />
-                            <label className='form-check-label' htmlFor='flexCheckIntermediate4'>$0-$999</label>
+                            <input onChange={handleChangePriceFunc(0)} className="form-check-input" type='checkbox' value='' id='flexCheckIntermediate4' />
+                            <label className='form-check-label' htmlFor='flexCheckIntermediate4'>$0-$1000</label>
                         </div>
                         <div className="form-check">
-                            <input className="form-check-input" type='checkbox' value='' id='flexCheckIntermediate5' />
-                            <label className='form-check-label' htmlFor='flexCheckIntermediate5'>$1000-$1999</label>
+                            <input onChange={handleChangePriceFunc(1000)} className="form-check-input" type='checkbox' value='' id='flexCheckIntermediate5' />
+                            <label className='form-check-label' htmlFor='flexCheckIntermediate5'>$1000-$2000</label>
                         </div>
                         <div className="form-check">
-                            <input className="form-check-input" type='checkbox' value='' id='flexCheckIntermediate6' />
+                            <input onChange={handleChangePriceFunc(2000)} className="form-check-input" type='checkbox' value='' id='flexCheckIntermediate6' />
                             <label className='form-check-label' htmlFor='flexCheckIntermediate6'>$2000+</label>
                         </div>
 
@@ -225,8 +263,53 @@ export default function ShopPage() {
 
                     <div className='d-flex justify-content-center flex-wrap'>
                         {a.map((e, index) => {
-                            return <a className='m-4' href={`/shop/${index}`}><StockItem index={index} guitar={Stock[e]} /></a>
-                        })}
+                            let currentStock = Stock[e]
+                            let currentName = currentStock['name'].toUpperCase()
+                            let currentPrice = currentStock['price']
+                            
+                            let anyModelChecked = anyChecked(modelFilters);
+                            let anyPriceChecked = anyChecked(priceFilters);
+
+                            let modelChecks = []
+                            if (anyModelChecked) {
+                                if (modelFilters['strat']) {
+                                    modelChecks.push('STRATOCASTER')
+                                } else { modelChecks.push('zzzzzzzzzzzzzzzzz') }
+                                if (modelFilters['tele']) {
+                                    modelChecks.push('TELECASTER')
+                                } else { modelChecks.push('zzzzzzzzzzzzzzzzz') }
+                            }
+
+                            let priceChecks = []
+                            if (anyPriceChecked) {
+                                if (priceFilters[0]) {
+                                    priceChecks.push([0, 1000])
+                                } else { priceChecks.push([0,0]) }
+                                if (priceFilters[1000]) {
+                                    priceChecks.push([1000, 2000]) 
+                                } else { priceChecks.push([0,0]) }
+                                if (priceFilters[2000]) {
+                                    priceChecks.push([2000, 999999])
+                                } else { priceChecks.push([0,0]) }
+                            }
+                            
+                            let result = null
+                            for (let i = 0; i < 2; i++) {
+                                for (let j = 0; j < 3; j++) {
+                                    if (!anyPriceChecked || (currentPrice >= priceChecks[j][0] && currentPrice <= priceChecks[j][1])) {
+                                        if (!anyModelChecked || currentName.includes(modelChecks[i])) {
+                                            let searchExists = currentName.includes(searchTerm.toUpperCase())
+                                            if (searchExists) {
+                                                result = <a key={index} className='m-4' href={`/shop/${index}`}><StockItem key={index} guitar={currentStock} /></a>
+                                            }
+
+                                        }    
+                                    }
+                                }
+                                          
+                            }
+                            return result
+                            })}
                     </div>
                 </div>
                 
@@ -235,4 +318,14 @@ export default function ShopPage() {
             
         </div>
     )
+}
+
+
+function anyChecked(obj) {
+    for(var key in obj) {
+        if (obj[key]) {
+            return true;
+        }
+    }
+    return false;
 }

@@ -3,25 +3,40 @@ import ReactDOM from 'react-dom/client'
 import './index.scss'
 
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import { useState } from 'react'
 
 import HomePage from './pages/home'
 import ShopPage from './pages/shop'
 import GuitarPage from './pages/guitar'
-import LearnPage from './pages/learn'
-import ContactPage from './pages/contact'
-import SignInPage from './pages/sign-in'
+import AboutPage from './pages/about'
+import CartPage from './pages/cart'
 
-ReactDOM.createRoot(document.getElementById('root')).render(
-  <React.StrictMode>
+function App() {
+  let [cart, setCart] = useState([0,2,0,0,1,0,0,1,0])
+  const editCart = (index, value) => {
+    const f = () => {
+      let newCart = [...cart]
+      newCart[index] += value
+      setCart(newCart)
+    }
+    return f
+  }
+
+  return (
     <BrowserRouter>
       <Routes>
         <Route path='/' element={<HomePage />} />
         <Route path='/shop' element={<ShopPage />} />
-        <Route path='/shop/:index' element={<GuitarPage />} />
-        <Route path='/learn' element={<LearnPage />} />
-        <Route path='/contact' element={<ContactPage />} />
-        <Route path='/sign-in' element={<SignInPage />} />
+        <Route path='/shop/:index' element={<GuitarPage cart={cart} editCart={editCart} />} />
+        <Route path='/about' element={<AboutPage />} />
+        <Route path='/shop/cart' element={<CartPage cart={cart} editCart={editCart} />} />
       </Routes>
     </BrowserRouter>
+  )
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(
+  <React.StrictMode>
+    <App />
   </React.StrictMode>,
 )

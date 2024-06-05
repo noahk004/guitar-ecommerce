@@ -1,3 +1,3 @@
 # Guitar E-commerce Web App
 Developed using React.js, Bootstrap, and React-Bootstrap.
-[Try it out!](http://aws-guitars-online-ecommerce.s3-website-us-west-1.amazonaws.com/)
+[Try it out!](https://main.d2snk1g9ednhqc.amplifyapp.com/)
